@@ -2,7 +2,8 @@ var basemap = new L.TileLayer(baseUrl, {maxZoom: 17, attribution: baseAttributio
 
 var center = new L.LatLng(0, 0);
 
-var map = new L.Map('map', {center: center, zoom: 2, maxZoom: maxZoom, layers: [basemap]});
+var map = new L.Map('map', {center: center, zoom: 2, maxZoom: maxZoom, layers: [basemap], searchControl: {layer: searchLayer}});
+var searchLayer = L.geoJson().addTo(map);
 
 var popupOpts = {
     autoPanPadding: new L.Point(5, 50),
@@ -57,7 +58,6 @@ var total = 0;
 var filterString;
 var markers = new L.MarkerClusterGroup();
 var dataCsv;
-
 var addCsvMarkers = function() {
     hits = 0;
     total = 0;
@@ -73,9 +73,9 @@ var addCsvMarkers = function() {
     points.clearLayers();
 
     markers = new L.MarkerClusterGroup(clusterOptions);
+    console.log(dataCsv)
     points.addData(dataCsv);
     markers.addLayer(points);
-
     map.addLayer(markers);
     try {
         var bounds = markers.getBounds();
