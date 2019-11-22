@@ -31,6 +31,67 @@ var points = L.geoCsv (null, {
         popup += "</table></popup-content>";
         layer.bindPopup(popup, popupOpts);
     },
+    pointToLayer: function (feature, latlng) {
+        return L.marker(latlng, {
+            icon:L.icon({// modify icon
+            iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+            /*shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',*/
+            iconSize: [20,20]
+            })
+        });
+    },
+    firstLineTitles: true,
+    filter: function(feature, layer) {
+        total += 1;
+        if (!filterString) {
+            hits += 1;
+            return true;
+        }
+        var hit = false;
+        var lowerFilterString = filterString.toLowerCase().strip();
+        $.each(feature.properties, function(k, v) {
+            var value = v.toLowerCase();
+            if (value.indexOf(lowerFilterString) !== -1) {
+                hit = true;
+                hits += 1;
+                return false;
+            }
+        });
+        return hit;
+    }
+});
+var pointsMaps = L.geoCsv (null, {
+    firstLineTitles: true,
+    fieldSeparator: fieldSeparator,
+    onEachFeature: function (feature, layer) {
+        var popup = '<div class="popup-content"><table class="table table-striped table-bordered table-condensed">';
+        for (var clave in feature.properties) {
+            var title = pointsMaps.getPropertyTitle(clave).strip();
+            var attr = feature.properties[clave];
+            if (title == labelColumn) {
+                layer.bindLabel(feature.properties[clave], {className: 'map-label'});
+            }
+            if (attr.indexOf('http') === 0) {
+                attr = '<a target="_blank" href="' + attr + '">'+ attr + '</a>';
+            }
+            if (attr) {
+                popup += '<tr><th>'+title+'</th><td>'+ attr +'</td></tr>';
+            }
+        }
+        console.log("HERE!");
+        popup += "</table></popup-content>";
+        layer.bindPopup(popup, popupOpts);
+    },
+    pointToLayer: function (feature, latlng) {
+        return L.marker(latlng, {
+            icon:L.icon({// modify icon
+            iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+            /*shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',*/
+            iconSize: [20,20]
+            })
+        });
+    },
+    firstLineTitles: true,
     filter: function(feature, layer) {
         total += 1;
         if (!filterString) {
@@ -56,7 +117,9 @@ var total = 0;
 var filterString;
 var markers = new L.MarkerClusterGroup();
 var dataCsv;
-var addCsvMarkers = function() {
+var addCsvMarkers1;
+var addCsvMarkers2;
+function addCsvMarkersPals() {
     hits = 0;
     total = 0;
     filterString = document.getElementById('filter-string').value;
@@ -67,8 +130,8 @@ var addCsvMarkers = function() {
         $("#clear").fadeOut();
     }
 
-    map.removeLayer(markers);
-    points.clearLayers();
+    /*map.removeLayer(markers);
+    points.clearLayers();*/
 
     markers = new L.MarkerClusterGroup(clusterOptions);
     points.addData(dataCsv);
@@ -100,6 +163,51 @@ var addCsvMarkers = function() {
     }
     return false;
 };
+function addCsvMarkersMapp() {
+    hits = 0;
+    total = 0;
+    filterString = document.getElementById('filter-string').value;
+
+    if (filterString) {
+        $("#clear").fadeIn();
+    } else {
+        $("#clear").fadeOut();
+    }
+
+    /*map.removeLayer(markers);
+    points.clearLayers();*/
+
+    markers = new L.MarkerClusterGroup(clusterOptions);
+    pointsMaps.addData(dataCsv);
+    markers.addLayer(pointsMaps);
+    map.addLayer(markers);
+    window.onload = function() {
+    $.get('data/mapp.csv', function(data) {
+        var build = '<table>\n';
+        var rows = data.split("\n");
+        rows.forEach( function getvalues(thisRow) {
+        build += "<tr>\n";
+        var columns = thisRow.split("|");
+        for(var i=0;i<columns.length;i++){ build += "<td>" + columns[i] + "</td>\n"; }   			
+        build += "</tr>\n";
+        })
+        build += "</table>";
+        document.getElementById("list").innerHTML=build;
+    })};	
+    try {
+        var bounds = markers.getBounds();
+        if (bounds) {
+            map.fitBounds(bounds);
+        }
+    } catch(err) {
+        // pass
+    }
+    if (total > 0) {
+        $('#search-results').html("Showing " + hits + " of " + total);
+    }
+    return false;
+};
+
 
 var typeAheadSource = [];
 
@@ -153,14 +261,40 @@ $(document).ready( function() {
             populateTypeAhead(csv, fieldSeparator);
             typeAheadSource = ArrayToSet(typeAheadSource);
             $('#filter-string').typeahead({source: typeAheadSource});
-            addCsvMarkers();
+            addCsvMarkers2=addCsvMarkersMapp();
         }
     });
 
     $("#clear").click(function(evt){
         evt.preventDefault();
         $("#filter-string").val("").focus();
-        addCsvMarkers();
+        addCsvMarkers2=addCsvMarkersMapp();
+    });
+
+});
+
+$(document).ready( function() {
+    $.ajax ({
+        type:'GET',
+        dataType:'text',
+        url: 'data/pals.csv',
+        contentType: "text/csv; charset=utf-8",
+        error: function() {
+            alert('Error retrieving csv file');
+        },
+        success: function(csv) {
+            dataCsv = csv;
+            populateTypeAhead(csv, fieldSeparator);
+            typeAheadSource = ArrayToSet(typeAheadSource);
+            $('#filter-string').typeahead({source: typeAheadSource});
+            addCsvMarkers1=addCsvMarkersPals();
+        }
+    });
+
+    $("#clear").click(function(evt){
+        evt.preventDefault();
+        $("#filter-string").val("").focus();
+        addCsvMarkers1=addCsvMarkersPals();
     });
 
 });
