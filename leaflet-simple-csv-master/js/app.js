@@ -30,8 +30,6 @@ var points = L.geoCsv (null, {
         }
         popup += "</table></popup-content>";
         layer.bindPopup(popup, popupOpts);
-        document.getElementById("list").innerText = layer.feature.properties.Name;
-
     },
     filter: function(feature, layer) {
         total += 1;
@@ -73,10 +71,22 @@ var addCsvMarkers = function() {
     points.clearLayers();
 
     markers = new L.MarkerClusterGroup(clusterOptions);
-    console.log(dataCsv)
     points.addData(dataCsv);
     markers.addLayer(points);
     map.addLayer(markers);
+    window.onload = function() {
+    $.get('data/mapp.csv', function(data) {
+        var build = '<table>\n';
+        var rows = data.split("\n");
+        rows.forEach( function getvalues(thisRow) {
+        build += "<tr>\n";
+        var columns = thisRow.split("|");
+        for(var i=0;i<columns.length;i++){ build += "<td>" + columns[i] + "</td>\n"; }   			
+        build += "</tr>\n";
+        })
+        build += "</table>";
+        document.getElementById("list").innerHTML=build;
+    })};	
     try {
         var bounds = markers.getBounds();
         if (bounds) {
