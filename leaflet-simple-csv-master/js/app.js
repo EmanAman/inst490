@@ -2,7 +2,7 @@ var basemap = new L.TileLayer(baseUrl, {maxZoom: 17, attribution: baseAttributio
 
 var center = new L.LatLng(0, 0);
 
-var map = new L.Map('map', {center: center, zoom: 2, maxZoom: maxZoom, layers: [basemap], searchControl: {layer: searchLayer}});
+var map = new L.Map('map', {center: center, zoom: 2, maxZoom: maxZoom, layers: [basemap]});
 var searchLayer = L.geoJson().addTo(map);
 
 var popupOpts = {
@@ -207,7 +207,13 @@ function addCsvMarkersMapp() {
     }
     return false;
 };
+function addCsvMarkers(){
+    addCsvMarkersPals();
+    addCsvMarkersMapp();
+}
+map._layersMinZoom=5;
 
+// add a layer group, yet empty
 
 var typeAheadSource = [];
 
@@ -298,3 +304,18 @@ $(document).ready( function() {
     });
 
 });
+
+var markersLayer = new L.LayerGroup();  
+map.addLayer(markersLayer); 
+
+// add the search bar to the map
+  var controlSearch = new L.Control.Search({
+    position:'topleft',    // where do you want the search bar?
+    layer: markersLayer,  // name of the layer
+    initial: false,
+    zoom: 11,        // set zoom to found location when searched
+    marker: false,
+    textPlaceholder: 'search...' // placeholder while nothing is searched
+  });
+
+  map.addControl(controlSearch); // add it to the map
