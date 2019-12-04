@@ -76,6 +76,7 @@ var popupOpts = {
 
 var mapsgeoJson = { type: 'FeatureCollection', features: mapsFeatures };
 var palsgeoJson = { type: 'FeatureCollection', features: palsFeatures };
+
 searchCtrl.indexFeatures(mapsgeoJson, ['Program Affiliation','Title','Description','Links (DRUM or Website)','Year','Advisor','Students']);
 var palsPoints = L.geoJson(palsgeoJson, {
     firstLineTitles: true,
@@ -100,6 +101,7 @@ var palsPoints = L.geoJson(palsgeoJson, {
         });
     }
 });
+
 
 var mapsPoints = L.geoJson(mapsgeoJson, {
     onEachFeature: function (feature, layer) {
@@ -132,6 +134,7 @@ var mapsSub=L.featureGroup.subGroup(
   var palsSub=L.featureGroup.subGroup(
     parent,[palsPoints]
   );
+console.log(palsSub);
 
 map.addLayer(mapsSub);
 map.addLayer(palsSub);
