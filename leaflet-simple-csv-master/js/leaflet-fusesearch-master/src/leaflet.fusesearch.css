@@ -37,9 +37,8 @@
 }
 
 .leaflet-fusesearch-panel .content {
-    height: 100%;
+    height: auto;
     width: 100%;
-    
     overflow: auto;
     -webkit-overflow-scrolling: touch;
 
@@ -107,6 +106,7 @@
 }
 
 .leaflet-fusesearch-panel .result-item {
+    margin-top: 15px;
     color : black;
 }
 
