@@ -13,11 +13,13 @@
 	z-index:1000;	
 	margin-left: 10px;
 	margin-top: 10px;
+	height: auto;
 }
 .leaflet-control-search.search-exp {/*expanded*/
 	background: #fff;
 	border: 2px solid rgba(0,0,0,0.2);
 	background-clip: padding-box;	
+	height: auto;
 }
 .leaflet-control-search .search-input {
 	display:block;
