@@ -122,9 +122,12 @@ var mapsPoints = L.geoJson(mapsgeoJson, {
     onEachFeature: function (feature, layer) {
         feature.layer = layer;
         var popup = '<div class="popup-content"><table class="table table-striped table-bordered table-condensed">';
-        popup += '<tr><th>' + feature.properties.Title + feature.properties.description + '</th><td>' + '</td></tr>';
+        popup += '<tr><th>' + feature.properties.Title + '</th><td>' + '</td></tr>';
         popup += "</table></popup-content>";
         layer.bindPopup(popup, popupOpts);
+        layer.on({
+            click: whenClicked
+        });
     },
     pointToLayer: function (feature, latlng) {
         return L.marker(latlng, {
