@@ -4,13 +4,11 @@
     position: fixed;
     
 }
-.wrapper {
-    min-height: 80%;
-    margin: 0;
-    padding: 0;
-  }
-#list-container {
+.list-wrapper{
     position: absolute;
+    display: grid;
+    grid-template-columns: 1fr 2fr ;
+    grid-row-gap: 1em;
     width: 40%;
     max-width: 350px;
     height: calc(100% - 180px);
@@ -19,8 +17,6 @@
     box-shadow: 0px 0px 10px 6px rgba(0, 0, 0, 0.2);
     z-index: 1001;
     background-color:white;
-    display: flex;
-    flex-direction: column;
     padding: 10px;
     padding-bottom: 10px;
     border-radius: 10px;
@@ -28,10 +24,13 @@
     color: #696969;
     -webkit-transition: width 1s;
     transition: width 1s;
-    display: inline-block;
 }
-.list{
-    max-height: 90%;
+.list-wrapper > div{
+    background: #eee;
+    padding:1em;
+}
+.list-wrapper > div:nth-child(odd){
+    background: #ddd;
 }
 
 body {
@@ -46,27 +45,20 @@ html, body, #map {
     display: inline-block;
 }
 
-
 .leaflet-control-attribution {
     font: 9px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif !important;
 }
 .sidenav {
-    position: absolute;
-    height: auto; /* Full-height: remove this if you want "auto" height */
-    width: 100%;
-    max-width: 350px;
-    /* Fixed Sidebar (stay in place on scroll) */
-    
     background-color:red; /* Black */
     overflow-x: hidden; /* Disable horizontal scroll */
     padding-top: 20px;
   }
-  
+
   /* The navigation menu links */
   .sidenav li {
     padding: 6px 8px 6px 16px;
     text-decoration: none;
-    font-size: 10px;
+    font-size: 16px;
     color:white;
     display: block;
   }
@@ -75,6 +67,9 @@ html, body, #map {
   .sidenav li:hover {
     color: #f1f1f1;
   }
+  .sidenav li:focus {
+    width:200px;
+}
   
   /* Style page content */
   .main {
@@ -98,17 +93,3 @@ html, body, #map {
     z-index: 9000638;
 }
 
-#clear {
-    display: inline-block;
-    position: relative;
-    right: -24px;
-    z-index: 999999;
-    top: 3px;
-    font-size:14pt;
-    text-decoration: none;
-    color: #aaa;
-}
-
-input.search-query {
-    padding-left: 24px;
-}
